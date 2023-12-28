@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>Lesson Parttime Write</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/lessonForm.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="lessonformbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <form id="rform" class="write-form">
+            <h2 class="login-header" style="color: white">Choreography Parttime</h2>
+            <input type="hidden" name="lpt_chonum" required th:value="${Choreo.cho_num}">
+            <input type="text" class="write-input" name="lpt_choname" autofocus required th:value="${Choreo.cho_name}">
+            <input type="text" class="write-input" name="lpt_parttime" autofocus placeholder="클래스 시간/예)01:00~02:00"
+                   required>
+            <input type="date" class="write-input" name="lpt_ptimedate" autofocus placeholder="클래스 진행 일자 선택" required>
+            <br>
+            <input type="button" class="login-btn" value="추가" id="ptbtn">
+        </form>
+        <div class="write-form">
+            <!--추가한 시간 출력 부분-->
+            <div class="replyarea2">
+                <div id="rSpace" class="rSpace">
+                    <th:block th:unless="${#lists.isEmpty(ptList)}">
+                        <th:block th:each="ptitem:${ptList}">
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left"
+                                 th:text="${ptitem.lpt_choname}"></div>
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left"
+                                 th:text="${ptitem.lpt_parttime}"></div>
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left"
+                                 th:text="${#dates.format(ptitem.lpt_ptimedate,'yyyy=MM-dd')}"></div>
+                            <div class="boardDetail_btn-area">
+                                <button class="login-btn" id="parttimeDelbtn"
+                                        th:onclick="parttimeDel([[${ptitem.lpt_num}]])">삭제
+                                </button>
+                            </div>
+                        </th:block>
+                    </th:block>
+                </div>
+                <br>
+            </div>
+        </div>
+        <div class="boardForm_btn-area">
+            <input type="submit" class="login-btn" value="완료" id="lessonComplite" onclick="lessoninput()">
+            <input type="reset" class="login-btn" value="리셋" onclick="lessoninput()">
+            <input type="button" class="login-btn" id="backbtn" value="취소">
+        </div>
+
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    $("#backbtn").click(function backbtn() {
+        window.history.back();
+    });
+
+    document.getElementById("ptbtn").addEventListener("click", function () {
+        // 각 입력 필드에서 값 가져오기
+        var choName = document.getElementsByName("lpt_choname")[0].value;
+        var partTime = document.getElementsByName("lpt_parttime")[0].value;
+        var pTimeDate = document.getElementsByName("lpt_ptimedate")[0].value;
+
+        // 값이 비어 있는지 확인
+        if (choName === "" || partTime === "" || pTimeDate === "") {
+            alert("값을 모두 입력하세요.");
+            return;// 비어 있는 필드가 있을 경우 알림 표시
+        }
+    });
+
+    // 등록 완료 후 레슨목록 이동 스크립트
+    $("#lessonComplite").click(function () {
+        let con = confirm("등록을 완료하시겠습니까?");
+        if (con == true) {
+            location.href = `/lessonList`;
+        }
+    });
+
+    $("#ptbtn").click(function () {
+        const rForm = $("#rform").serialize();
+        console.log(rForm);
+
+        //restcontroller에 전송
+        $.ajax({
+            url: "parttimeInsert",
+            type: "post",
+            data: rForm,
+            success: function (res) {
+                console.log(res);
+                if (res != null) {
+                    let str = "";
+                    str += `
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left">${res.lpt_choname}</div>
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left">${res.lpt_parttime}</div>
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left">${res.lpt_ptimedate}</div>
+                            <div class="boardDetail_btn-area">
+                        <div class="boardDetail_btn-area">
+                                <button class="login-btn" id="parttimeDelbtn" onclick="parttimeDel(${res.lpt_num})">삭제</button>
+                        </div>
+                  `;
+                    $("#rSpace").prepend(str);
+                    $("#comment").val("");
+                } else {
+                    alert("시간 저장 실패");
+                    $("#comment").val("");
+                    $("#comment").focus();
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("시간 저장 실패");
+            }
+        });
+    });
+
+    function parttimeDel(lpt_num) {
+        let con = confirm("파트타임을 삭제하시겠습니까?");
+        if (con == true) {
+            let chonum = [[${Choreo.cho_num}]];
+            location.href = `/parttimeDelete?lpt_num=${lpt_num}&cho_num=${chonum}`;
+        }
+    };
+
+</script>
+</html>

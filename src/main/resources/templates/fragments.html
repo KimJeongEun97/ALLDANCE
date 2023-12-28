@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>fragments</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+</head>
+<body>
+<div th:fragment="header(member)" class="top-bar">
+    <div class="content">
+        <nav class="top-center">
+            <a href="/" class="main-button">
+                <img src="images/AD-logo.jpg" alt="로고" class="top-left logo" onclick="gohome()">
+                <h2 class="top-left">ALL DANCE</h2>
+            </a>
+        </nav>
+        <nav class="top-right">
+            <ul>
+                <th:block th:if="${member == null}">
+                    <li><a th:href="@{loginForm}">LOGIN</a></li>
+                    <li>&nbsp|&nbsp</li>
+                    <li><a th:href="@{joinForm}">JOIN</a></li>
+                </th:block>
+                <th:block th:unless="${member == null}">
+                    <li th:text="'WELCOME '+'['+${member.m_id}+']'"></li>
+                    <li>&nbsp|&nbsp</li>
+                    <li><a th:href="@{myPage}">
+                        <button class="mypage-btn" id="upbtn">MY INFO</button>
+                    </a></li>
+                    <li>&nbsp|&nbsp</li>
+                    <li><a th:href="@{logout}">LOGOUT</a></li>
+                </th:block>
+            </ul>
+        </nav>
+    </div>
+    <nav class="nav-open" id="side-nav">
+        <div class="menu-btn">
+            <div class="line line--1"></div>
+            <div class="line line--2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MENU</div>
+            <div class="line line--3"></div>
+        </div>
+
+        <div class="nav-links">
+            <th:block>
+                <a th:href="@{danceBoardList}" class="link">Show Your Dance!<br>
+                    <p style="font-size: x-small">여러분의 춤을 공유해주세요!</p></a>
+                <a th:href="@{lessonList}" class="link">Class Reservation<br>
+                    <p style="font-size: x-small">클래스 예약</p></a>
+                <a th:href="@{introduction}" class="link">What is ALLDANCE?<br>
+                    <p style="font-size: x-small">올댄스 소개</p></a>
+                <a th:href="@{adInfo}" class="link">Contact Us&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                    <p style="font-size: x-small">문의하기</p></a>
+            </th:block>
+        </div>
+    </nav>
+    <script src="js/script.js"></script>
+</div>
+<div th:fragment="footer" class="footer-bar">
+    <div class="content">
+        <div class="fcontents">
+            <img src="images/AD-logo.jpg" alt="footer-logo" class="footer-logo">
+            <span class="footer-txt">
+                &copy;All Dance Crew Platform
+            </span>
+            <span class="footer-txt">
+
+            </span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

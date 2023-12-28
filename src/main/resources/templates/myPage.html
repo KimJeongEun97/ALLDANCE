@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>MyPage</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/myPage.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="joinformbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <div class="join-box">
+            <div class="joininput-box">
+                <form th:action="@{myPageProc}" class="join-form" method="post" enctype="multipart/form-data">
+                    <h2 class="login-header" style="color: white">My Info Edit</h2>
+                    <input type="text" class="join-input" name="m_id" required th:value="${member.m_id}" readonly>
+                    <input type="password" class="join-input" id="m_pwd" name="m_pwd" required
+                           th:value="${member.m_pwd}">
+                    <input type="password" class="join-input" id="m_pwdCheck">
+                    <input type="text" class="join-input" name="m_name" required th:value="${member.m_name}">
+                    <input type="text" class="join-input" name="m_birth" required th:value="${member.m_birth}">
+                    <input type="text" class="join-input" name="m_phone" required th:value="${member.m_phone}">
+                    <input type="text" class="join-input" name="m_sex" th:value="${member.m_sex}" readonly>
+                    <input type="text" class="join-input" name="m_email" required th:value="${member.m_email}">
+                    <input type="button" class="idcheck-btn" value="이메일 확인" onclick="emailCheck()">
+                    <input type="text" class="join-input" name="m_zipcode" required th:value="${member.m_zipcode}">
+                    <input type="text" class="join-input" name="m_addr" required th:value="${member.m_addr}">
+                    <input type="text" class="join-input" name="m_category" th:value="${member.m_category}" readonly>
+                    <input type="submit" class="join-btn" value="변경"><br>
+                    <input type="reset" class="join-btn" value="복원"><br>
+                    <input type="button" class="join-btn" id="backbtn" value="취소">
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    <!--뒤로가기-->
+    $("#backbtn").click(function () {
+        window.history.back();
+    });
+
+    function pwCheck() {
+        if ($("#m_pwd").val() === $("#m_pwdCheck").val()) {
+            $("#m_pwd, #m_pwdCheck").css("color", "green");
+        } else {
+            $("#m_pwd, #m_pwdCheck").css("color", "red");
+        }
+    }
+
+    $(document).ready(function () {
+        // 비밀번호 입력 시 비교 및 색상 변경
+        $("#m_pwd, #m_pwdCheck").keyup(function () {
+            pwCheck();
+        });
+    });
+
+    //이메일 확인
+    let ek = false;//false일 경우 확인을 안했건나 중복된 이메일을 입력한 상태
+    function emailCheck() {
+        console.log("emailCheck");
+        let email = $("#m_email").val();
+        //이메일 값을 입력했는지 검사.
+        if (email == "") {//입력을 안했으면
+            alert("이메일을 입력하세요.");
+            $("#m_email").focus();
+            return;
+        }
+
+        //전송할 데이터 작성
+        let sendObj = {"m_email": email};
+        //ajax로 서버에 이메일 전송
+        $.ajax({
+            url: "emailCheck",
+            type: "get",
+            data: sendObj,
+            success: (email) => {
+                if (email == "ok") { //사용가능한 이메일
+                    alert("사용 가능한 이메일입니다.");
+                    ek = true;
+                } else { //중복된 이메일
+                    alert("사용할 수 없는 이메일 입니다.");
+                    $("#m_email").val("");
+                    $("#m_email").focus();
+                    ek = false;
+                }
+            },
+            error: (err) => {
+                console.log(err);
+                ek = false;
+            }
+        });
+    }
+</script>
+</html>

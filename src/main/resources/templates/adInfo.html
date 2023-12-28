@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>MyPage</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/introduction.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="joinformbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <div class="join-box" style="margin-top: 40px; display: flex">
+            <div class="joininput-box">
+                <h2 class="login-header" style="color: white">All Dance Info.</h2>
+                <p style="color: white">E-Mail:www.icia.co.kr/인천일보아카데미 401호</p>
+                <p style="color: white">Tel : 010-0000-0000</p>
+                <p style="color: white">담당자 : 박종일</p>
+                <p style="color: white">Addr : 인천광역시 미추홀구 매소홀로488번길 6-32 태승빌딩 5층</p>
+                <p style="color: white">Republic of Korea</p>
+            </div>
+            <div class="joininput-box">
+                <img src="../images/iciamap.jpg" alt="map" width="380px" style="margin-right: 20px; float: right">
+            </div>
+        </div>
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+</html>

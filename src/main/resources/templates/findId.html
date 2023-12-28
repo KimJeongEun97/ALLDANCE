@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>findID</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/findIdPw.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="loginbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <div class="login-form">
+            <form th:action="@{findIdProc}" method="post" class="login-form">
+                <h2 class="login-header" style="color: white">FIND ID</h2>
+                <input type="text" class="login-input" name="m_name" autofocus required placeholder="이름">
+                <input type="text" class="login-input" name="m_phone" placeholder="회원가입시 등록한 휴대폰번호 입력" required>
+                <br>
+                <input type="submit" class="login-btn" value="확인">
+            </form>
+            <a th:href="@{findPwCertification}" style="text-decoration: none"><button class="join-btn">비밀번호 찾기</button></a>
+            <br>
+            <a th:href="@{loginForm}" style="text-decoration: none"><button class="join-btn">로그인 하러 가기</button></a>
+        </div>
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+</html>

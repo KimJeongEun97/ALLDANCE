@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>BoardWrite</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/danceWrite.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="danceboardwritebackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <form th:action="@{dbWriteProc}" class="write-form" method="post"
+              enctype="multipart/form-data" onclick="check()">
+            <h2 class="login-header" style="color: white">원하는 혹은 멋있는 춤을 공유해주세요!</h2>
+            <!-- 제목, 내용, 파일, 작성자(로그인 한 id)-->
+
+            <input type="hidden" name="d_mid" th:value="${session.member.m_id}">
+            <input type="text" class="write-input" name="d_title" autofocus placeholder="제목" required>
+            <input type="text" class="write-input" name="d_category" autofocus placeholder="카테고리" required>
+            <div class="filebox">
+                <label for="dbvideofile" style="text-align: center">업로드</label>
+                <input type="file" name="dbvideofiles" id="dbvideofile">
+                <input type="text" class="dbvideoupload-name" value="영상 업로드." readonly>
+            </div>
+            <video class="previewvideo" id="previewvideo" controls style="display: none;"></video>
+            <div class="filebox2">
+                <label for="dbimgfile" style="text-align: center">업로드</label>
+                <input type="file" name="dbimgfiles" id="dbimgfile">
+                <input type="text" class="dbimgupload-name" value="섬네일 업로드." readonly>
+            </div>
+            <img class="previewimg" id="previewimg" src="#" alt="Preview" style="display: none;">
+            <textarea rows="10" name="d_contents" placeholder="내용을 적어주세요." class="write-input ta"
+                      required></textarea>
+            <div class="boardForm_btn-area">
+                <input type="submit" class="login-btn" value="생성" onclick="danceinput()">
+                <input type="reset" class="login-btn" value="리셋" onclick="danceinput()">
+                <input type="button" class="login-btn" id="backbtn" value="취소">
+            </div>
+        </form>
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    document.getElementById('dbimgfile').addEventListener('change', function () {
+        var file = this.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var preview = document.getElementById('previewimg');
+                preview.style.display = 'block';
+                preview.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    document.getElementById('dbvideofile').addEventListener('change', function () {
+        var file = this.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var preview = document.getElementById('previewvideo');
+                preview.style.display = 'block';
+                preview.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    $("#dbvideofile").on("change", function () {
+        let files = $("#dbvideofile")[0].files;
+        console.log(files);
+
+        let videofileName = "";
+
+        if (files.length > 1) {
+            videofileName = `${files[0].name} 외 ${files.length - 1}개`;
+        } else if (files.length == 1) {
+            videofileName = files[0].name;
+        } else {
+            videofileName = "파일선택";
+        }
+        $(".dbvideoupload-name").val(videofileName);
+    });
+
+    $("#dbimgfile").on("change", function () {
+        let files = $("#dbimgfile")[0].files;
+        console.log(files);
+
+        let imgfileName = "";
+
+        if (files.length > 1) {
+            imgfileName = `${files[0].name} 외 ${files.length - 1}개`;
+        } else if (files.length == 1) {
+            imgfileName = files[0].name;
+        } else {
+            imgfileName = "파일선택";
+        }
+        $(".dbimgupload-name").val(imgfileName);
+    });
+
+    function danceinput() {
+        let dance = $("#dance").val();
+        //내용을 입력했는지 검사.
+        if (dance == "") {//입력을 안했으면
+            alert("내용을 입력하세요.");
+            $("#dance").focus();
+            return;
+        }
+    }
+
+    function check() {
+        console.dfrm = document.dform
+        console.log(dfrm);
+        let length = dfrm.length - 3;
+        for (let i = 0; i < length; i++) {
+            if (dfrm[i].value == "" || dfrm[i].value == null) {
+                alert(`${dfrm[i].title} 입력하세요!`);
+                dfrm[i].focus();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    $("#backbtn").click(function backbtn() {
+        let url = "/danceBoardList?";
+        const searchDto = [[${session.sDto}]];
+        let colname = "";
+        let keyword = "";
+        if (searchDto != null) {
+            colname = searchDto.colname;
+            keyword = searchDto.keyword;
+        }
+        let page = [[${session.pageNum}]];
+
+        if (colname == null || colname == "") { //검색 안한 목록 이동
+            url += `pageNum=${page}`;
+        } else { //검색한 결과 목록으로 이동.
+            url += `colname=${colname}&keyword=${keyword}&&pageNum=${page}`;
+        }
+        console.log(url);
+        location.href = url;
+    });
+</script>
+</html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.alldance01.alldance.dao.DanceBoardDao">
+
+    <insert id="insertDanceBoard" parameterType="danceBoardDto"
+            useGeneratedKeys="true" keyProperty="d_num">
+        <selectKey keyProperty="d_num" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into danceBoard
+        values (null,#{d_title},#{d_category},#{d_contents},#{d_mid},default,default)
+    </insert>
+
+    <insert id="insertdbVideoFile" parameterType="danceVideoFileDto">
+        insert into dancevideoFile
+        values (null, #{dvf_dnum}, #{dvf_oriname}, #{dvf_sysname})
+    </insert>
+    <insert id="insertdbImgFile" parameterType="danceImgFileDto">
+        insert into danceimgFile
+        values (null, #{dif_dnum}, #{dif_oriname}, #{dif_sysname})
+    </insert>
+    <insert id="insertCategory" parameterType="danceBoardDto">
+        insert into dancecategory
+        values (null, #{dc_category})
+    </insert>
+    <insert id="insertReply" parameterType="danceReplyDto" useGeneratedKeys="true" keyProperty="dbr_num">
+        <selectKey keyProperty="dbr_num" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into danceboardreply
+        values (null,#{dbr_dnum},#{dbr_contents},#{dbr_mid},default)
+    </insert>
+
+
+    <update id="updateViewPoint" parameterType="danceBoardDto">
+        update danceBoard
+        set d_views=#{d_views}
+        where d_num=#{d_num}
+    </update>
+    <update id="danceBoardUpdate" parameterType="danceBoardDto">
+        update danceboard
+        set d_title=#{d_title},d_contents=#{d_contents},d_category=#{d_category}
+        where d_num=#{d_num}
+    </update>
+
+
+    <delete id="deleteImgFiles" parameterType="Integer">
+        delete from danceimgfile where dif_dnum=#{d_num}
+    </delete>
+    <delete id="deleteVideoFiles" parameterType="Integer">
+        delete from dancevideofile where dvf_dnum=#{d_num}
+    </delete>
+    <delete id="deleteDanceBoard" parameterType="Integer">
+        delete from danceboard where d_num=#{d_num}
+    </delete>
+    <delete id="deleteReply" parameterType="Integer">
+        delete from danceboardreply where dbr_num=#{dbr_num}
+    </delete>
+    <delete id="deleteReplyList" parameterType="Integer">
+        delete from danceboardreply where dbr_dnum=#{d_num};
+    </delete>
+    <delete id="deleteVideoFile" parameterType="String">
+        delete from dancevideofile where dvf_sysname=#{dvf_sysname};
+    </delete>
+    <delete id="deleteImgFile" parameterType="String">
+        delete from danceimgfile where dif_sysname=#{dif_sysname};
+    </delete>
+
+
+    <select id="selectDanceBoardList" resultType="DanceBoardDto" parameterType="searchDto">
+        select * from dblist
+        <if test="colname != null and colname != ''">
+            where ${colname} like CONCAT('%',#{keyword},'%')
+        </if>
+        limit #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectDanceBoardCnt" resultType="Integer" parameterType="searchDto">
+        select count(*) from dblist
+        <if test="colname != null and colname !=''">
+            where ${colname} like concat('%',#{keyword},'%')
+        </if>
+    </select>
+    <select id="selectDance" resultType="DanceBoardDto" parameterType="Integer">
+        select * from dblist where d_num=#{d_num}
+    </select>
+    <select id="selectImgFileList" resultType="DanceImgFileDto" parameterType="Integer">
+        select * from danceimgfile where dif_dnum=#{d_num}
+    </select>
+    <select id="selectVideoFileList" resultType="DanceVideoFileDto" parameterType="Integer">
+        select * from dancevideofile where dvf_dnum=#{d_num}
+    </select>
+    <select id="selectVideoNameList" resultType="String" parameterType="Integer">
+        select dvf_sysname from dancevideofile where dvf_dnum=#{d_num}
+    </select>
+    <select id="selectImgNameList" resultType="String" parameterType="Integer">
+        select dif_sysname from danceimgfile where dif_dnum=#{d_num}
+    </select>
+    <select id="selectReplyList" resultType="DanceReplyDto" parameterType="Integer">
+        select * from dbrlist where dbr_dnum=#{d_num}
+    </select>
+    <select id="selectLastReply" resultType="DanceReplyDto" parameterType="Integer">
+        select * from dbrlist where dbr_num=#{dbr_num}
+    </select>
+</mapper>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>Login</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/loginForm.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="loginbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <div class="login-box">
+            <form th:action="@{loginProc}" method="post" class="login-form">
+                <h2 class="login-header" style="color: white">Login All Dance</h2>
+                <input type="text" class="login-input" name="m_id" autofocus required placeholder="ID">
+                <input type="password" class="login-input" name="m_pwd" placeholder="PW" required>
+                <br>
+                <input type="submit" class="login-btn" value="Login">
+            </form>
+            <form method="post" class="login-sub-form">
+                <ul>
+                    <li><a th:href="@{joinForm}">회원가입</a></li>
+                    <li>&nbsp|&nbsp</li>
+                    <li><a th:href="@{findId}">아이디 찾기</a></li>
+                    <li>&nbsp|&nbsp</li>
+                    <li><a th:href="@{findPwCertification}">비밀번호 찾기</a></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+</html>

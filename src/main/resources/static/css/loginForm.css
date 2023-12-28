@@ -1,0 +1,140 @@
+* {
+    box-sizing: border-box;
+}
+html {
+    height: 100%;
+}
+body {
+    margin: 0;
+    height: 100%;
+}
+
+.loginbackground{
+    background-color: rgba(0, 0, 0, 0.5);
+    background-image: url("../images/bea.jpg");
+    background-size: cover; /* 이미지를 화면에 맞게 늘리거나 축소합니다. */
+    background-position: center;): /* 이미지를 가운데 정렬합니다. */
+    /* 투명한 블랙 배경. 여기서 '0.3'은 투명도를 나타냅니다. */
+}
+.login-box {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px 10px 10px 10px;
+    width: 25%;
+    margin: 0 auto;
+    height: 100%;
+}
+.login-form {
+    max-width: 350px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.login-form, .login-header {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
+}
+.login-form input[type="text"] {
+    margin-bottom: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+login-form input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.login-form .login-input {
+    position: relative;
+    height: auto;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+.login-input{
+    display: block;
+    width: 100%;
+    line-height: 1.5;
+    color: black;
+    background-color: lavender;
+    border: 1px solid darkgray;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.login-input::placeholder{
+    color: black;
+}
+
+.login-btn-form {
+    max-width: 100px;
+    margin: 0 auto;
+    text-align: center;
+}
+.login-btn {
+    text-align: center;
+    width: 100px;
+    padding: 5px 10px;
+    font-size: 18px;
+    line-height: 1.0;
+    border-radius: 6px;
+    color: #fff;
+    margin-bottom: 10px;
+    background-color: lightgray;
+    border-color: gray;
+}
+.login-sub-form {
+    max-width: 350px;
+    margin: 0 auto;
+    text-align: center;
+}
+.login-sub-form ul {
+    list-style: none;
+    padding: 0px;
+    margin-left: 35px;
+}
+.login-sub-form ul li {
+    text-decoration: none;
+    color: white;
+    float: left;
+}
+.login-sub-form ul li a {
+    text-decoration: none;
+}
+.login-sub-form ul li a:link {
+    color: white;
+}
+.login-sub-form ul li a:visited {
+    color: #fff;
+}
+.login-sub-form ul li a:hover {
+    color: #8c8c8c;
+}
+.suc {
+    display: none;
+}
+.bef {
+    display: block;
+}
+.join-box{
+    background-color: rgba(0,0,0,0.3);
+    width: 50%;
+    height: 50%;
+    border-radius: 10px 10px 10px 10px;
+    display: flex;
+    margin: 0 auto;
+    text-align: center;
+    align-items: center;
+}
+.join-form {
+    max-width: 700px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+@media only screen and (max-width: 300px) {
+    .content {
+        max-width: 100%;
+
+    }
+}

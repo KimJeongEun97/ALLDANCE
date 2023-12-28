@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>DanceBoardList</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/danceBoard.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="danceboardbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="dancelist_content">
+        <div class="board-form">
+            <h2 class="login-header" style="color: white">ALL DANCE COMMUNITY PLACE</h2>
+            <div class="search-area">
+                <select id="sel">
+                    <option value="b_title" selected>
+                        제목
+                    </option>
+                    <option value="b_category">
+                        카테고리
+                    </option>
+                    <option value="b_contents">
+                        내용
+                    </option>
+                </select>
+                <input type="text" id="keyword">
+                <button id="search">🔍Search</button>
+            </div>
+            <br>
+            <div class="data-area">
+                <div class="data-row">
+                    <th:block th:if="${#lists.isEmpty(dbList)}">
+                        <div style="color: white; width: 100%">
+                            게시글이 없습니다.
+                        </div>
+                    </th:block>
+                </div>
+                <div class="data-row data-area">
+                    <th:block th:unless="${#lists.isEmpty(dbList)}">
+                        <th:block th:each="dbitem:${dbList}">
+                            <a class="data-row"
+                               th:href="@{danceBoardDetail(d_num=${dbitem.d_num},d_views=${dbitem.d_views},
+                               d_mid=${dbitem.d_mid},d_category=${dbitem.d_category})}">
+                                <div class="t-no p-20 list_h" style="height: 5%; border-radius: 10px 0 0 0"
+                                     th:text="${dbitem.d_num}"></div>
+                                <div class="t-title p-60 list_h"
+                                     style="height: 5%;"
+                                     th:text="${dbitem.d_title}"></div>
+                                <div class="t-title p-20 list_h"
+                                     style="height: 5%; border-radius: 0 10px 0 0; font-weight: bolder"
+                                     th:text="${dbitem.d_category}"></div>
+
+                                <div class="t-thum p-100 thum_h" style="padding-top: 2.5%">
+                                    <th:block th:if="${#strings.contains(dbitem.dif_oriname, '.jpg')}">
+                                        <img th:src="@{dbimgupload/}+${dbitem.dif_sysname}" width="800">
+                                    </th:block>
+                                    <th:block th:if="${#strings.contains(dbitem.dif_oriname, '.png')}">
+                                        <img th:src="@{dbimgupload/}+${dbitem.dif_sysname}" width="800">
+                                    </th:block>
+                                    <th:block th:if="${#strings.contains(dbitem.dif_oriname, '.gif')}">
+                                        <img th:src="@{dbimgupload/}+${dbitem.dif_sysname}" width="800">
+                                    </th:block>
+                                    <th:block th:if="${#strings.contains(dbitem.dif_oriname, '.webp')}">
+                                        <img th:src="@{dbimgupload/}+${dbitem.dif_sysname}" width="800">
+                                    </th:block>
+                                </div>
+                                <div class="t-name p-30 list_h" style="height: 5%; border-radius: 0 0 0 10px"
+                                     th:text="'ID : '+ ${dbitem.d_mid}"></div>
+                                <div class="t-date p-40 list_h" style="height: 5%"
+                                     th:text="${#dates.format(dbitem.d_date, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                                <div class="t-view p-30 list_h" style="height: 5%; border-radius: 0 0 10px 0"
+                                     th:text="'조회수 : '+${dbitem.d_views}"></div>
+                            </a>
+                            <br>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+            <div class="btn-area">
+                <div class="paging" th:utext="${paging}"></div>
+                <a th:href="@{danceBoardWrite}" class="wr-btn-font">
+                    <button class="wr-btn">
+                        글쓰기
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script>
+    $("#search").click(function () {
+        //사용자가 입력한 검색 키워드를 가져온다.
+        let keyword = $("#keyword").val();
+        if (keyword == "") {
+            alert("검색어를 입력하세요.");
+            return;
+        }
+        let select = $("#sel").val();
+        //검색용 uri 생성 및 실행(location.href)
+        location.href = `/danceBoardList?colname=${select}&keyword=${keyword}&pageNum=1`;
+    });
+</script>
+</html>

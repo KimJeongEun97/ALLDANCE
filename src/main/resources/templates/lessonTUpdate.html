@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <title>Lesson Parttime Update</title>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/fragments.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css'>
+    <link rel="stylesheet" href="css/lessonForm.css">
+    <link rel="stylesheet" href="css/lessonList.css">
+    <script th:inline="javascript">
+        $(function () {
+            //메시지 출력
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            } //복사하여 index.html에도 넣기
+        });
+    </script>
+</head>
+<body class="lessonformbackground">
+<header>
+    <th:block th:insert="~{fragments::header(${session.member})}"/>
+</header>
+<section>
+    <div class="content">
+        <h2 class="login-header" style="color: white">Choreography Parttime Change</h2>
+        <div class="write-form">
+            <div class="data-area">
+                <div class="data-row">
+                    <th:block th:if="${#lists.isEmpty(ptimeList)}">
+                        <div style="color: white; width: 100%">
+                            저장된 파트타임이 없습니다
+                        </div>
+                    </th:block>
+                </div>
+                <div class="data-row">
+                    <th:block th:unless="${#lists.isEmpty(ptimeList)}">
+                        <th:block th:each="ptimeitem:${ptimeList}">
+                            <div class="t-title p-100 list_h" style="height: 5%"
+                                 th:text="'안무가 :'+${ptimeitem.lpt_choname}"></div>
+                            <div class="t-title p-100 list_h" style="height: 5%"
+                                 th:text="'파트타임 :'+${ptimeitem.lpt_parttime}"></div>
+                            <div class="t-title p-100 list_h" style="height: 5%"
+                                 th:text="'날짜 :'+${ptimeitem.lpt_ptimedate}"></div>
+                            <button class="login-btn" id="lastparttimeDel" style="text-align: center"
+                                    th:onclick="lastParttimeDel([[${ptimeitem.lpt_num}]])">삭제
+                            </button>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+            <hr>
+            <div class="board-form">
+                <form id="rform" class="write-form">
+                    <input type="hidden" name="lpt_chonum" required th:value="${choreo.cho_num}">
+                    <input type="text" class="write-input" name="lpt_choname" autofocus required
+                           th:value="${choreo.cho_name}">
+                    <input type="text" class="write-input" name="lpt_parttime" autofocus
+                           placeholder="클래스 시간/예)01:00~02:00"
+                           required>
+                    <input type="date" class="write-input" name="lpt_ptimedate" autofocus placeholder="클래스 진행 일자 선택"
+                           required>
+                    <br>
+                    <input type="button" class="login-btn" value="추가" id="ptbtn">
+                </form>
+                <div class="write-form">
+                    <!--추가한 시간 출력 부분-->
+                    <div class="replyarea2">
+                        <div id="rSpace" class="rSpace">
+                            <th:block th:unless="${#lists.isEmpty(ptList)}">
+                                <th:block th:each="ptitem:${ptList}">
+                                    <div class="t_content p-100 content_h" style="color: black; text-align: left"
+                                         th:text="${ptitem.lpt_choname}"></div>
+                                    <div class="t_content p-100 content_h" style="color: black; text-align: left"
+                                         th:text="${ptitem.lpt_parttime}"></div>
+                                    <div class="t_content p-100 content_h" style="color: black; text-align: left"
+                                         th:text="${#dates.format(ptitem.lpt_ptimedate,'yyyy=MM-dd')}"></div>
+                                    <div class="boardDetail_btn-area">
+                                        <button class="login-btn" id="parttimeDelbtn"
+                                                th:onclick="parttimeDel([[${ptitem.lpt_num}]])">삭제
+                                        </button>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="boardForm_btn-area">
+                    <input type="submit" class="login-btn" value="수정완료" id="lessonComplite" onclick="lessoninput()">
+                    <input type="reset" class="login-btn" value="리셋" onclick="lessoninput()">
+                    <input type="button" class="login-btn" id="backbtn" value="취소">
+                </div>
+            </div>
+</section>
+<footer>
+    <th:block th:insert="~{fragments::footer}"/>
+</footer>
+</body>
+<script th:inline="javascript">
+    // 등록 완료 후 레슨목록 이동 스크립트
+    $("#lessonComplite").click(function () {
+        let con = confirm("수정을 완료하시겠습니까?");
+        if (con == true) {
+            location.href = `/lessonList`;
+        }
+    });
+    $("#backbtn").click(function backbtn() {
+        window.history.back();
+    });
+
+    $("#ptbtn").click(function () {
+        const rForm = $("#rform").serialize();
+        console.log(rForm);
+
+        //restcontroller에 전송
+        $.ajax({
+            url: "parttimeInsert",
+            type: "post",
+            data: rForm,
+            success: function (res) {
+                console.log(res);
+                if (res != null) {
+                    let str = "";
+                    str += `
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left">${res.lpt_choname}</div>
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left">${res.lpt_parttime}</div>
+                            <div class="t_content p-100 content_h" style="color: black; text-align: left">${res.lpt_ptimedate}</div>
+                            <div class="boardDetail_btn-area">
+                        <div class="boardDetail_btn-area">
+                                <button class="login-btn" id="parttimeDelbtn" onclick="parttimeDel(${res.lpt_num})">삭제</button>
+                        </div>
+                  `;
+                    $("#rSpace").prepend(str);
+                    $("#comment").val("");
+                } else {
+                    alert("시간 저장 실패");
+                    $("#comment").val("");
+                    $("#comment").focus();
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("시간 저장 실패");
+            }
+        });
+    });
+
+    function parttimeDel(lpt_num) {
+        let con = confirm("파트타임을 삭제하시겠습니까?");
+        if (con == true) {
+            let chonum = [[${choreo.cho_num}]];
+            location.href = `/parttimeDelete?lpt_num=${lpt_num}&cho_num=${chonum}`;
+        }
+    }
+    function lastParttimeDel(lpt_num) {
+        let con = confirm("파트타임을 삭제하시겠습니까?");
+        if (con == true) {
+            let chonum = [[${choreo.cho_num}]];
+            location.href = `/lastParttimeDelete?lpt_num=${lpt_num}&cho_num=${chonum}`;
+        }
+    }
+</script>
+</html>

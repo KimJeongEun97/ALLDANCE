@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.alldance01.alldance.dao.LessonListDao">
+    <insert id="insertLessonList" parameterType="lessonListDto" useGeneratedKeys="true" keyProperty="ls_num">
+        <selectKey keyProperty="ls_num" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into lessonlist
+        values (null,#{ls_academy},#{ls_addr},#{ls_title},default,#{ls_total},#{ls_mid},#{ls_price})
+    </insert>
+    <insert id="insertLsImgFile" parameterType="lessonImgFileDto">
+        insert into lessonimgfile
+        values (null, #{lif_lsnum}, #{lif_oriname}, #{lif_sysname})
+    </insert>
+    <insert id="insertLessonChoreo" parameterType="lessonChoreoDto" useGeneratedKeys="true" keyProperty="cho_num">
+        insert into lessonchoreo
+        values (null, #{cho_lsnum}, #{cho_lsacademy}, #{cho_name})
+    </insert>
+    <insert id="insertLcImgFile" parameterType="lessonChoreoImgDto">
+        insert into lessonchoreoimgfile
+        values (null, #{lcif_chonum}, #{lcif_oriname}, #{lcif_sysname})
+    </insert>
+    <insert id="insertParttime" parameterType="lessonPartTimeDto" useGeneratedKeys="true" keyProperty="lpt_num">
+        <selectKey keyProperty="lpt_num" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into lessonparttime
+        values (null,#{lpt_chonum},#{lpt_choname},#{lpt_parttime},#{lpt_ptimedate})
+    </insert>
+    <insert id="insertLessonImgFile" parameterType="lessonImgFileDto">
+        insert into lessonimgfile
+        values (null, #{lif_lsnum}, #{lif_oriname}, #{lif_sysname})
+    </insert>
+    <insert id="insertChoreoImgFile" parameterType="lessonChoreoImgDto">
+        insert into lessonchoreoimgfile
+        values (null, #{lcif_chonum}, #{lcif_oriname}, #{lcif_sysname})
+    </insert>
+    <insert id="insertReservation" parameterType="lessonReservationListDto" useGeneratedKeys="true"
+            keyProperty="lrl_num">
+        <selectKey keyProperty="lrl_num" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into lessonreservationlist
+        values
+        (null,#{lrl_mid},#{lrl_lsnum},#{lrl_lsacademy},#{lrl_lsaddr},#{lrl_lstitle},
+         #{lrl_chonum},#{lrl_choname},#{lrl_lptparttime},#{lrl_lptptimedate},#{lrl_lstotal},#{lrl_lsprice})
+    </insert>
+    <insert id="insertClass" parameterType="lessonReservationListDto">
+        insert into lessonreservationlist
+        values (null,#{lrl_mid},#{lrl_lsnum},#{lrl_lsacademy},#{lrl_lsaddr},#{lrl_lstitle},#{lrl_chonum},
+                #{lrl_choname},#{lrl_lptparttime},#{lrl_lptptimedate},#{lrl_lstotal},#{lrl_lsprice})
+    </insert>
+
+
+    <update id="lessonUpdate" parameterType="lessonListDto">
+        update lessonlist
+        set ls_academy=#{ls_academy},
+            ls_addr=#{ls_addr},
+            ls_title=#{ls_title},
+            ls_total=#{ls_total},
+            ls_price=#{ls_price}
+        where ls_num = #{ls_num}
+    </update>
+    <update id="lessonChoreoUpdate" parameterType="lessonChoreoDto">
+        update lessonchoreo
+        set cho_lsnum=#{cho_lsnum},
+            cho_lsacademy=#{cho_lsacademy},
+            cho_name=#{cho_name}
+        where cho_num = #{cho_num}
+    </update>
+
+    <delete id="deleteParttime" parameterType="Integer">
+        delete
+        from lessonparttime
+        where lpt_num = #{lpt_num}
+    </delete>
+    <delete id="lessonDeleteParttime" parameterType="Integer">
+        delete
+        from lessonparttime
+        where lpt_chonum = #{cho_num}
+    </delete>
+    <delete id="lessonDeleteChoreoImg" parameterType="Integer">
+        delete
+        from lessonchoreoimgfile
+        where lcif_chonum = #{cho_num}
+    </delete>
+    <delete id="lessonDeleteChoreo" parameterType="Integer">
+        delete
+        from lessonchoreo
+        where cho_num = #{cho_num}
+    </delete>
+    <delete id="lessonDeleteImg" parameterType="Integer">
+        delete
+        from lessonimgfile
+        where lif_lsnum = #{ls_num}
+    </delete>
+    <delete id="lessonDelete" parameterType="Integer">
+        delete
+        from lessonlist
+        where ls_num = #{ls_num}
+    </delete>
+    <delete id="lessonImgDelete" parameterType="String">
+        delete
+        from lessonimgfile
+        where lif_sysname = #{lif_sysname}
+    </delete>
+    <delete id="choreoImgDelete" parameterType="String">
+        delete
+        from lessonchoreoimgfile
+        where lcif_sysname = #{lcif_sysname}
+    </delete>
+    <delete id="lessonParttimeDelete" parameterType="Integer">
+        delete
+        from lessonparttime
+        where lpt_num = #{lpt_num}
+    </delete>
+    <delete id="deleteReservation" parameterType="Integer">
+        delete
+        from lessonreservationlist
+        where lrl_num = #{lrl_num}
+    </delete>
+    <delete id="deleteStatus" parameterType="Integer">
+        delete
+        from lessonreservationlist
+        where lrl_num = #{lrl_num}
+    </delete>
+
+    <select id="selectLessonList" resultType="LessonListDto" parameterType="searchDto">
+        select * from lslist
+        <if test="colname != null and colname != ''">
+            where ${colname} like CONCAT('%',#{keyword},'%')
+        </if>
+        limit #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectChoreoList" resultType="LessonChoreoDto" parameterType="searchDto">
+        select * from cholist
+        <if test="colname != null and colname != ''">
+            where ${colname} like CONCAT('%',#{keyword},'%')
+        </if>
+        limit #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectPartTimeList" resultType="lessonPartTimeDto" parameterType="searchDto">
+        select * from ptlist
+        <if test="colname != null and colname != ''">
+            where ${colname} like CONCAT('%',#{keyword},'%')
+        </if>
+    </select>
+
+    <select id="selectLessonListCnt" resultType="Integer" parameterType="searchDto">
+        select count(*) from lslist
+        <if test="colname != null and colname !=''">
+            where ${colname} like concat('%',#{keyword},'%')
+        </if>
+    </select>
+    <select id="selectAcademy" resultType="LessonListDto" parameterType="Integer">
+        select *
+        from lessonlist
+        where ls_num = #{ls_num}
+    </select>
+    <select id="selectChoreo" resultType="LessonChoreoDto" parameterType="Integer">
+        select *
+        from lessonchoreo
+        where cho_num = #{cho_num}
+    </select>
+    <select id="selectParttimeList" resultType="LessonPartTimeDto" parameterType="Integer">
+        select *
+        from lessonparttime
+        where lpt_num = #{lpt_num}
+    </select>
+    <select id="selectLastParttime" resultType="LessonPartTimeDto" parameterType="Integer">
+        select *
+        from ptlist
+        where lpt_num = #{lpt_num}
+    </select>
+
+
+    <select id="selectLessonView" resultType="LessonListDto" parameterType="Integer">
+        select *
+        from lslist
+        where ls_num = #{ls_num}
+    </select>
+    <select id="selectChoreoView" resultType="LessonChoreoDto" parameterType="Integer">
+        select *
+        from cholist
+        where cho_lsnum = #{ls_num}
+    </select>
+    <select id="selectParttimeView" resultType="LessonPartTimeDto" parameterType="Integer">
+        select *
+        from ptlist
+        where lpt_chonum = #{cho_num}
+    </select>
+    <select id="selectLessonImgList" resultType="String" parameterType="Integer">
+        select lif_sysname
+        from lessonimgfile
+        where lif_lsnum = #{ls_num}
+    </select>
+    <select id="selectChoreoImgList" resultType="String" parameterType="Integer">
+        select lcif_sysname
+        from lessonchoreoimgfile
+        where lcif_chonum = #{cho_num}
+    </select>
+    <select id="selectLesson" resultType="LessonListDto" parameterType="Integer">
+        select *
+        from lslist
+        where ls_num = #{ls_num}
+    </select>
+    <select id="selectLessonImg" resultType="LessonImgFileDto" parameterType="Integer">
+        select *
+        from lessonimgfile
+        where lif_lsnum = #{ls_num}
+    </select>
+    <select id="selectLessonChoreo" resultType="LessonChoreoDto" parameterType="Integer">
+        select *
+        from cholist
+        where cho_lsnum = #{ls_num}
+    </select>
+    <select id="selectChoreoImg" resultType="LessonChoreoImgDto" parameterType="Integer">
+        select *
+        from lessonchoreoimgfile
+        where lcif_chonum = #{cho_num}
+    </select>
+    <select id="selectLastPartTimeList" resultType="LessonPartTimeDto" parameterType="Integer">
+        select *
+        from lessonparttime
+        where lpt_chonum = #{lpt_chonum}
+    </select>
+    <select id="selectChoreoPt" resultType="LessonChoreoDto" parameterType="Integer">
+        select *
+        from lessonchoreo
+        where cho_num = #{lpt_num}
+    </select>
+    <select id="selectLessonReservationList" resultType="lessonReservationListDto" parameterType="searchDto">
+        select *
+        from lrlist
+        where lrl_mid = #{m_id}
+        limit #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectReservationListCnt" resultType="Integer" parameterType="searchDto">
+        select count(*)
+        from lrlist
+    </select>
+
+    <select id="selectLessonReserv" resultType="LessonReservationListDto" parameterType="Integer">
+        select *
+        from lrlist
+        where lrl_num = #{lrl_num}
+    </select>
+    <select id="selectChoreoImgfile" resultType="LessonChoreoImgDto" parameterType="Integer">
+        select *
+        from lessonchoreoimgfile
+        where lcif_chonum = #{cho_num}
+    </select>
+    <select id="selectReservChoreoImg" resultType="LessonChoreoImgDto" parameterType="Integer">
+        select *
+        from lessonchoreoimgfile
+        where lcif_chonum = #{lrl_chonum}
+    </select>
+    <select id="selectLessonStatusList" resultType="lessonListDto" parameterType="searchDto">
+        select * from lslist where ls_mid=#{m_id} limit #{pageNum}, #{listCnt}
+    </select>
+    <select id="selectStatusListCnt" resultType="Integer" parameterType="searchDto">
+        select count(*)
+        from lslist
+    </select>
+    <select id="selectLessonStatusDetail" resultType="LessonReservationListDto" parameterType="Integer">
+        select *
+        from lrlist
+        where lrl_lsnum = #{ls_num}
+    </select>
+    <select id="selectMemberId" resultType="LessonReservationListDto" parameterType="Integer">
+        select lrl_mid
+        from lrlist
+        where lrl_lsnum = #{ls_num}
+    </select>
+    <select id="selectMember" resultType="MemberDto" parameterType="String">
+        select *
+        from member
+        where m_id = #{lrl_mid}
+    </select>
+    <select id="selectLessonStatuslrlnum" resultType="LessonReservationListDto" parameterType="Integer">
+        select lrl_num from lrlist where lrl_lsnum=#{ls_num}
+    </select>
+    <select id="selectLastReservation" resultType="LessonReservationListDto">
+        select *
+        from lrlist
+        where lrl_num = #{lrl_num}
+    </select>
+</mapper>

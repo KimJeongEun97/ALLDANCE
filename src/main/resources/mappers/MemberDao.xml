@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.alldance01.alldance.dao.MemberDao">
+    <insert id="insertMember" parameterType="MemberDto">
+        insert into member
+        values (#{m_id},#{m_pwd},#{m_name},#{m_birth},#{m_phone},#{m_sex},#{m_email},#{m_zipcode},#{m_addr},#{m_category})
+    </insert>
+    <update id="updatePassword" parameterType="memberDto">
+        update member
+        set m_pwd=#{m_pwd}
+        where m_id=#{m_id}
+    </update>
+    <update id="updateMypage" parameterType="memberDto">
+        update member
+        set m_id=#{m_id},m_pwd=#{m_pwd},m_name=#{m_name},
+            m_birth=#{m_birth},m_phone=#{m_phone},m_sex=#{m_sex},
+            m_email=#{m_email},m_zipcode=#{m_zipcode},m_addr=#{m_addr},m_category=#{m_category}
+        where m_id=#{m_id}
+    </update>
+    <select id="selectId" resultType="java.lang.Integer">
+        select count(*) from member where m_id=#{m_id}
+    </select>
+    <select id="selectEmail" resultType="java.lang.Integer">
+        select count(*) from member where m_email=#{m_email}
+    </select>
+    <select id="selectPwd" resultType="String" parameterType="String">
+        select m_pwd from member where m_id=#{m_id}
+    </select>
+    <select id="selectMember" resultType="MemberDto" parameterType="String">
+        select * from minfo where m_id=#{m_id}
+    </select>
+
+    <select id="selectFoundId" resultType="String" parameterType="String">
+        select m_id from member where m_name=#{m_name} and m_phone=#{m_phone}
+    </select>
+
+    <select id="selectIdInquiry" resultType="String" parameterType="String">
+        select * from member where m_id = #{m_id} and m_email = #{m_eamil}
+    </select>
+
+    <select id="selectMemberInfo" resultType="MemberDto" parameterType="String">
+        select * from member where m_id=#{m_id}
+    </select>
+
+
+</mapper>
