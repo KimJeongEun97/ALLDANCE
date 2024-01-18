@@ -15,10 +15,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")//범위 지정(모든 페이지)
                 .excludePathPatterns("/", "/css/**", "/js/**", "/images/**", "/mp4/**")
                 .excludePathPatterns("/dbimgupload/**","/dbvideoupload/**","/lcimgupload/**","/lcvideoupload/**")
-                .excludePathPatterns("/joinForm", "/loginForm", "/idCheck","/emailCheck")
-                .excludePathPatterns("/findId", "/findIdComplete", "/findPwCertification", "/findPwChange", "/mail")
+                .excludePathPatterns("/joinForm", "/loginForm", "/idCheck","/emailCheck", "/mail", "/mailConfirm")
+                .excludePathPatterns("/findId", "/findIdComplete", "/findPwCertification", "/findPwChange")
                 .excludePathPatterns("/danceBoardList","/introduction","/adInfo")
                 .excludePathPatterns("/loginProc", "/joinProc", "/error/**", "/findIdProc","/findPwChangeProc");
-
     }
 }
